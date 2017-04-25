@@ -1,0 +1,14 @@
+{
+  "name": "cluster-test",
+  "version": "0.0.1",
+  "description": "testing cluster",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Radita Liem",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.2"
+  }
+}
