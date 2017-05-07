@@ -1,8 +1,4 @@
-var cluster = require('cluster');
 var http = require('http');
-//var numCPUs = require('os').cpus().length;
-var numCPUs = 1;
-
 
 // generate hash table
 function hashTable(obj) {
@@ -79,7 +75,8 @@ function generateRandomValue() {
 var tb1 = new hashTable();
 var tb2 = new hashTable();
 
-  // Worker processes have a http server.
+
+// server request responded
 http.Server((req, res) => {
   res.writeHead(200);
   res.end('table1 size = ' + tb1.length + ' table2 size = ' + + tb2.length);
