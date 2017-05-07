@@ -6,12 +6,16 @@ var numCPUs = require('os').cpus().length;
 function hashTable(obj) {
   this.length = 0;
   this.items = {};
+  this.keys = [];
+  this.values = [];
 
   //parse bulk object
   for (var p in obj) {
     if (obj.hasOwnProperty(p)) {
       this.items[p] = obj[p];
       this.length++;
+      this.keys.push(p);
+      this.values.push(obj[p]);
     }
   }
 
@@ -28,6 +32,14 @@ function hashTable(obj) {
     }
 
     this.items[key] = value;
+
+    if (this.keys.indexOf(key) < 0) {
+      this.keys.push(key);
+    }
+
+    if (this.values.indexOf(value) < 0) {
+      this.values.push(value);
+    }
   }
 
   this.getItem = function(key) {
@@ -47,161 +59,161 @@ function hashTable(obj) {
       return false;
     }
   }
-
-  this.keys = function() {
-    var keys = [];
-    for (var k in this.items) {
-      if (this.hasItem(k)) {
-        keys.push(k);
-      }
-    }
-    return keys;
-  }
-
-  this.values = function() {
-    var values = [];
-    for (var v in this.items) {
-      if (this.hasItem(v)) {
-        values.push(this.items[k]);
-      }
-    }
-    return values;
-  }
 }
 
-function generateRandomValue() {
-  var limit = 10000000;
-  return Math.floor(Math.random() * limit);
+function generateInputValue(size, isRandom, start, stop) {
+  var arr = new Array();
+
+  if (isRandom) {
+    for (var i = 0; i < size; i++) {
+      arr.push(Math.floor(Math.random() * (stop - start)) + start);
+    }
+  } else {
+    for (var i = start; i < (size + start); i++) {
+      arr.push(i + 1);
+    }
+  }
+
+  return arr;
+}
+
+// hash function table 1
+function hash1(val) {
+  var con = 104729;
+  return parseInt(val % con);
+}
+
+// hash function table 2
+function hash2(val) {
+  var con = 104729;
+  return parseInt((val / con) % con);
+}
+
+function serialCuckoo(table1, table2, val) {
+  var currVal = val;
+
+  var inserted = false;
+  var currTb = 1;
+  var attempt = 0;
+  var cyclic = false;
+
+  while (inserted == false && cyclic == false && attempt < 50) {
+    var h1 = hash1(currVal);
+    var h2 = hash2(currVal);
+
+    if (currTb == 1) {
+      if (table1.hasItem(h1)) {
+        var temp = table1.getItem(h1);
+        table1.setItem(h1, currVal);
+        currVal = temp;
+        currTb = 2;
+      } else {
+        table1.setItem(h1, currVal);
+        inserted = true;
+      }
+
+    } else {
+      if (table2.hasItem(h2)) {
+        var temp = table2.getItem(h2);
+        table2.setItem(h2, currVal);
+        currVal = temp;
+        currTb = 1;
+        if (currVal == val) {
+          cyclic = true;
+          //console.log('cyclic');
+        }
+      } else {
+        table2.setItem(h2, currVal);
+        inserted = true;
+      }
+    }
+
+    attempt++;
+  }
+
+}
+
+function combineResolveHash(res) {
+  var tb1 = new hashTable(res[0].table1.items);
+  var tb2 = new hashTable(res[0].table2.items);
+
+  var col = new Array();
+
+  for (var i = 1; i < res.length; i++) {
+    var t1 = new hashTable(res[i].table1.items);
+    for (var j = 0; j < t1.keys.length; j++) {
+      if (tb1.keys.indexOf(t1.keys[j]) > -1) {
+        col.push(t1.getItem(t1.keys[j]));
+      } else {
+        tb1.setItem(t1.keys[j], t1.getItem(t1.keys[j]));
+      }
+    }
+
+    var t2 = new hashTable(res[i].table2.items);
+    for (var j = 0; j < t2.keys.length; j++) {
+      if (tb2.keys.indexOf(t2.keys[j]) > -1) {
+        col.push(t2.getItem(t2.keys[j]));
+      } else {
+        tb2.setItem(t2.keys[j], t2.getItem(t2.keys[j]));
+      }
+    }
+  }
+
+  // resolve collision if any
+  for (var i = 0; i < col.length; i++) {
+    serialCuckoo(tb1, tb2, col[i]);
+  }
+
+  console.log('table1 size: ' + tb1.keys.length);
+  console.log('table2 size: ' + tb2.keys.length);
+  //console.log('cyclic value: ' + (tbsize - tb2.keys.length - tb1.keys.length));
+
 }
 
 //start cluster
 if (cluster.isMaster) {
-  var numReqs = 0;
+   var inputVal = generateInputValue(1000000, false, 50000, 20000000);
+   var generatedValue = 0;
+   var collectedResult = new Array();
 
-  var hashTable1 = new hashTable();
-  var hashTable2 = new hashTable();
+   var startDate = new Date();
+   for (var i = 0; i < numCPUs; i++) {
+     var worker = cluster.fork();
+     worker.send({'input' : inputVal, 'position' : i, 'total' : numCPUs});
+     worker.on('message', function(msg) {
+       collectedResult.push(msg);
 
-  for (var i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
+       if (collectedResult.length == numCPUs) {
+         combineResolveHash(collectedResult);
+         var endDate   = new Date();
+         var ms = (endDate.getTime() - startDate.getTime());
+         console.log(ms)
+       }
+     });
+   }
 
-  // setInterval(() => {
-  //   console.log('table1 size = ' + hashTable1.length + ' table2 size = ' + + hashTable2.length);
-  // }, 3342000);
+   // resolver
+}
 
-  for (const id in cluster.workers) {
+if (cluster.isWorker) {
+  process.on('message', function(msg) {
 
-    cluster.workers[id].on('message', function(msg) {
+    var size = Math.ceil(msg.input.length / msg.total);
+    var start = msg.position * size;
+    var stop = start + size;
 
-      if (msg.topic && msg.topic == 'request') {
-        // distribute latest table
-        cluster.workers[id].send({
-          topic : 'table',
-          from : 'master',
-          table1 : hashTable1,
-          table2 : hashTable2
-        });
-      }
-
-      if (msg.topic && msg.topic === 'numgenerated') {
-        //numReqs += 1;
-
-        hashTable1 = new hashTable(msg.table1.items);
-        hashTable2 = new hashTable(msg.table2.items);
-        //console.log('table1 size = ' + hashTable1.length);
-      }
-    });
-  }
-
-  // revive dead worker
-  cluster.on('exit', function(worker) {
-    console.log('worker %d dead', worker.id);
-    cluster.fork();
-  });
-
-} else {
-
-  // Worker processes have a http server.
-  http.Server((req, res) => {
-    res.writeHead(200);
-    res.end('hello world\n');
-
-    var valGen = generateRandomValue();
-
-
-    process.send({
-      from : 'worker',
-      workerId : cluster.worker.id,
-      topic : 'request',
-    });
-
-    process.on('message', function(msg) {
-
-      if (msg.topic && msg.topic === 'table') {
-        //numReqs += 1;
-        var tb1 = new hashTable(msg.table1.items);
-        var tb2 = new hashTable(msg.table2.items);
-
-        parallelCuckoo(tb1, tb2, valGen);
-
-        console.log('table1 size = ' + tb1.length + ' table2 size = ' + + tb2.length);
-      }
-
-    });
-
-    function parallelCuckoo(tb1, tb2, valGen) {
-
-      //1. sha1
-      //2. sha256
-      //3. sha224
-      //4. sha512
-      //5. sha384
-
-      var valEn1 = require("crypto").createHash('sha1').update(valGen.toString()).digest('hex');
-      var valEn2 = require("crypto").createHash('sha256').update(valGen.toString()).digest('hex');
-
-      //check if empty
-
-      if (tb1.hasItem(valEn1)) {
-        if (tb1.getItem(valEn1) == valGen) {
-          //console.log('duplicate value');
-        } else {
-          if (tb2.hasItem (valEn2)) {
-            if (tb2.getItem(valEn2) == valGen) {
-              //console.log('duplicate value');
-            } else {
-              var valEn3 = require("crypto").createHash('sha224').update(valGen.toString()).digest('hex');
-              var temp = tb1.getItem(valEn1);
-              tb1.setItem(valEn1, valGen);
-              var temp2 = tb2.getItem(valEn2);
-              tb2.setItem(valEn2, temp);
-
-              if (tb1.hasItem(valEn3)) {
-                console.log('collision');
-              } else {
-                tb1.setItem(valEn3, temp2);
-              }
-            }
-
-          } else {
-            var temp = tb1.getItem(valEn1);
-            tb1.setItem(valEn1, valGen);
-            tb2.setItem(valEn2, temp);
-          }
-        }
-      } else {
-        tb1.setItem(valEn1, valGen);
-      }
-
-      process.send({
-        from : 'worker',
-        workerId : cluster.worker.id,
-        topic : 'numgenerated',
-        table1 : tb1,
-        table2 : tb2
-      });
-
+    if (stop > msg.input.length) {
+      stop = msg.input.length;
     }
-    // notify master about the request
-  }).listen(3000);
+
+    var tb1 = new hashTable();
+    var tb2 = new hashTable();
+
+    for (var i = start; i < stop; i++) {
+      serialCuckoo(tb1, tb2, msg.input[i]);
+    }
+
+    process.send({'table1' : tb1, 'table2' : tb2});
+
+  });
 }

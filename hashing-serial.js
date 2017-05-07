@@ -4,6 +4,8 @@ var http = require('http');
 function hashTable(obj) {
   this.length = 0;
   this.items = {};
+  this.keys = [];
+  this.values = [];
 
   //parse bulk object
   for (var p in obj) {
@@ -26,6 +28,14 @@ function hashTable(obj) {
     }
 
     this.items[key] = value;
+
+    if (this.keys.indexOf(key) < 0) {
+      this.keys.push(key);
+    }
+
+    if (this.values.indexOf(value) < 0) {
+      this.values.push(value);
+    }
   }
 
   this.getItem = function(key) {
@@ -45,91 +55,95 @@ function hashTable(obj) {
       return false;
     }
   }
-
-  this.keys = function() {
-    var keys = [];
-    for (var k in this.items) {
-      if (this.hasItem(k)) {
-        keys.push(k);
-      }
-    }
-    return keys;
-  }
-
-  this.values = function() {
-    var values = [];
-    for (var v in this.items) {
-      if (this.hasItem(v)) {
-        values.push(this.items[k]);
-      }
-    }
-    return values;
-  }
 }
 
-function generateRandomValue() {
-  var limit = 10000000;
-  return Math.floor(Math.random() * limit);
+// hash function table 1
+function hash1(val) {
+  var con = 104729;
+  return parseInt(val % con);
+}
+
+// hash function table 2
+function hash2(val) {
+  var con = 104729;
+  return parseInt((val / con) % con);
+}
+
+function serialCuckoo(table1, table2, val) {
+  var currVal = val;
+
+  var inserted = false;
+  var currTb = 1;
+  var attempt = 0;
+  var cyclic = false;
+
+  while (inserted == false && cyclic == false && attempt < 50) {
+    var h1 = hash1(currVal);
+    var h2 = hash2(currVal);
+
+    if (currTb == 1) {
+      if (table1.hasItem(h1)) {
+        var temp = table1.getItem(h1);
+        table1.setItem(h1, currVal);
+        currVal = temp;
+        currTb = 2;
+      } else {
+        table1.setItem(h1, currVal);
+        inserted = true;
+      }
+
+    } else {
+      if (table2.hasItem(h2)) {
+        var temp = table2.getItem(h2);
+        table2.setItem(h2, currVal);
+        currVal = temp;
+        currTb = 1;
+        if (currVal == val) {
+          cyclic = true;
+          //console.log('cyclic');
+        }
+      } else {
+        table2.setItem(h2, currVal);
+        inserted = true;
+      }
+    }
+
+    attempt++;
+  }
+
+}
+
+function generateInputValue(size, isRandom, start, stop) {
+  var arr = new Array();
+
+  if (isRandom) {
+    for (var i = 0; i < size; i++) {
+      arr.push(Math.floor(Math.random() * (stop - start)) + start);
+    }
+  } else {
+    for (var i = start; i < (size + start); i++) {
+      arr.push(i + 1);
+    }
+  }
+
+  return arr;
 }
 
 var tb1 = new hashTable();
 var tb2 = new hashTable();
+var tbsize = 600;
+var inputVal = generateInputValue(1000000, false, 50000, 20000000);
+//var inputVal = [20, 50, 53, 75, 100, 67, 105, 3, 36, 39, 6];
 
 
-// server request responded
-http.Server((req, res) => {
-  res.writeHead(200);
-  res.end('table1 size = ' + tb1.length + ' table2 size = ' + + tb2.length);
+var startDate = new Date();
+for (var i = 0; i < inputVal.length; i++) {
+   serialCuckoo(tb1, tb2, inputVal[i]);
+}
 
-  console.log('table1 size = ' + tb1.length + ' table2 size = ' + + tb2.length);
-
-  var valGen = generateRandomValue();
-  parallelCuckoo(tb1, tb2, valGen);
-
-  function parallelCuckoo(tb1, tb2, valGen) {
-
-    //1. sha1
-    //2. sha256
-    //3. sha224
-    //4. sha512
-    //5. sha384
-
-    var valEn1 = require("crypto").createHash('sha1').update(valGen.toString()).digest('hex');
-    var valEn2 = require("crypto").createHash('sha256').update(valGen.toString()).digest('hex');
-
-    //check if empty
-
-    if (tb1.hasItem(valEn1)) {
-      if (tb1.getItem(valEn1) == valGen) {
-        //console.log('duplicate value');
-      } else {
-        if (tb2.hasItem (valEn2)) {
-          if (tb2.getItem(valEn2) == valGen) {
-            //console.log('duplicate value');
-          } else {
-            var valEn3 = require("crypto").createHash('sha224').update(valGen.toString()).digest('hex');
-            var temp = tb1.getItem(valEn1);
-            tb1.setItem(valEn1, valGen);
-            var temp2 = tb2.getItem(valEn2);
-            tb2.setItem(valEn2, temp);
-
-            if (tb1.hasItem(valEn3)) {
-              console.log('collision');
-            } else {
-              tb1.setItem(valEn3, temp2);
-            }
-          }
-
-        } else {
-          var temp = tb1.getItem(valEn1);
-          tb1.setItem(valEn1, valGen);
-          tb2.setItem(valEn2, temp);
-        }
-      }
-    } else {
-      tb1.setItem(valEn1, valGen);
-    }
-
-  }
-  // notify master about the request
-}).listen(3000);
+console.log('table1 size: ' + tb1.keys.length);
+console.log('table2 size: ' + tb2.keys.length);
+//console.log('cyclic value: ' + (tbsize - tb2.keys.length - tb1.keys.length));
+var endDate   = new Date();
+var ms = (endDate.getTime() - startDate.getTime());
+console.log(ms);
