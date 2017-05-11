@@ -132,7 +132,7 @@ function generateInputValue(size, isRandom, start, stop) {
 var tb1 = new hashTable();
 var tb2 = new hashTable();
 var tbsize = 600;
-var inputVal = generateInputValue(1000000, false, 50000, 20000000);
+var inputVal = generateInputValue(1000000, false, 30000, 10000000);
 //var inputVal = [20, 50, 53, 75, 100, 67, 105, 3, 36, 39, 6];
 
 

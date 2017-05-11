@@ -8,7 +8,6 @@
 ## Cluster module
 
 
-
 ## Cuckoo hashing
 
 Cuckoo hashing is a simple collision resolution in hash table.
@@ -29,15 +28,11 @@ Cuckoo hashing is a simple collision resolution in hash table.
 
 ## Conclusion
 
-# How to run
+## How to run
 -- install node js https://nodejs.org/en/download/ if you don't have any
 -- if you have node on your computer, 'npm install create-node-module'
 -- run parallel code : node hashing-parallel.js
 -- run serial code : node hashing-serial.js
-
-# Notes
-- buggy shared state
-- cuckoo hashing wrapper?  
 
 # Matrix Multiplication
 

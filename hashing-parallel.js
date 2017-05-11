@@ -172,7 +172,7 @@ function combineResolveHash(res) {
 
 //start cluster
 if (cluster.isMaster) {
-   var inputVal = generateInputValue(1000000, false, 50000, 20000000);
+   var inputVal = generateInputValue(1000000, false, 30000, 10000000);
    var generatedValue = 0;
    var collectedResult = new Array();
 
