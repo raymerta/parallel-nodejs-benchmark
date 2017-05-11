@@ -1,6 +1,7 @@
 var cluster = require('cluster');
 var http = require('http');
 var numCPUs = require('os').cpus().length;
+//var numCPUs = 2;
 
 // generate hash table
 function hashTable(obj) {
@@ -172,9 +173,15 @@ function combineResolveHash(res) {
 
 //start cluster
 if (cluster.isMaster) {
-   var inputVal = generateInputValue(1000000, false, 30000, 10000000);
+  var rangeInput = 1000000;
+
+   var inputVal = generateInputValue(rangeInput, false, 30000, 10000000);
    var generatedValue = 0;
    var collectedResult = new Array();
+
+   console.log('cluster is Master. start to create child process');
+   console.log('number of insertion : ' + rangeInput);
+   console.log('number of CPUs : ' + numCPUs);
 
    var startDate = new Date();
    for (var i = 0; i < numCPUs; i++) {
