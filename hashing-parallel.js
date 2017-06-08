@@ -165,39 +165,44 @@ function combineResolveHash(res) {
     serialCuckoo(tb1, tb2, col[i]);
   }
 
-  console.log('table1 size: ' + tb1.keys.length);
-  console.log('table2 size: ' + tb2.keys.length);
+  console.log('Hashing done');
+  console.log('=================================================');
+  console.log('Filled table 1: ' + tb1.keys.length);
+  console.log('Filled table 2: ' + tb2.keys.length);
   //console.log('cyclic value: ' + (tbsize - tb2.keys.length - tb1.keys.length));
 
 }
 
 //start cluster
 if (cluster.isMaster) {
-  var rangeInput = 1000000;
+  var rangeInput = 100000;
+  var inputVal = generateInputValue(rangeInput, false, 30000, 10000000);
+  var generatedValue = 0;
+  var collectedResult = new Array();
 
-   var inputVal = generateInputValue(rangeInput, false, 30000, 10000000);
-   var generatedValue = 0;
-   var collectedResult = new Array();
+  console.log('Parallel Hashing');
+  console.log('=================================================');
+  console.log('Cluster is Master. start to create child process');
+  console.log('Number of insertion : ' + rangeInput);
+  console.log('Number of CPUs : ' + numCPUs);
+  console.log('=================================================');
+  console.log('Waiting for hash to be completed...');
 
-   console.log('cluster is Master. start to create child process');
-   console.log('number of insertion : ' + rangeInput);
-   console.log('number of CPUs : ' + numCPUs);
+  var startDate = new Date();
+  for (var i = 0; i < numCPUs; i++) {
+    var worker = cluster.fork();
+      worker.send({'input' : inputVal, 'position' : i, 'total' : numCPUs});
+      worker.on('message', function(msg) {
+         collectedResult.push(msg);
 
-   var startDate = new Date();
-   for (var i = 0; i < numCPUs; i++) {
-     var worker = cluster.fork();
-     worker.send({'input' : inputVal, 'position' : i, 'total' : numCPUs});
-     worker.on('message', function(msg) {
-       collectedResult.push(msg);
-
-       if (collectedResult.length == numCPUs) {
-         combineResolveHash(collectedResult);
-         var endDate   = new Date();
-         var ms = (endDate.getTime() - startDate.getTime());
-         console.log(ms)
-       }
-     });
-   }
+         if (collectedResult.length == numCPUs) {
+             combineResolveHash(collectedResult);
+             var endDate   = new Date();
+             var ms = (endDate.getTime() - startDate.getTime());
+             console.log('Time used: ' + (ms/1000) + ' secs');
+         }
+    });
+  }
 
    // resolver
 }

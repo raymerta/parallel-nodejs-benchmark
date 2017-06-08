@@ -132,18 +132,26 @@ function generateInputValue(size, isRandom, start, stop) {
 var tb1 = new hashTable();
 var tb2 = new hashTable();
 var tbsize = 600;
-var inputVal = generateInputValue(1000000, false, 30000, 10000000);
+var rangeInput = 100000;
+var inputVal = generateInputValue(rangeInput, false, 500000, 10000000);
 //var inputVal = [20, 50, 53, 75, 100, 67, 105, 3, 36, 39, 6];
 
+console.log('Serial Hashing');
+console.log('=================================================');
+console.log('Number of insertion : ' + rangeInput);
+console.log('=================================================');
+console.log('Waiting for hash to be completed...');
 
 var startDate = new Date();
 for (var i = 0; i < inputVal.length; i++) {
    serialCuckoo(tb1, tb2, inputVal[i]);
 }
 
-console.log('table1 size: ' + tb1.keys.length);
-console.log('table2 size: ' + tb2.keys.length);
-//console.log('cyclic value: ' + (tbsize - tb2.keys.length - tb1.keys.length));
+console.log('Hashing done');
+console.log('=================================================');
+console.log('Filled table 1: ' + tb1.keys.length);
+console.log('Filled table 2: ' + tb2.keys.length);
 var endDate   = new Date();
 var ms = (endDate.getTime() - startDate.getTime());
-console.log(ms);
+
+console.log('Time used: ' + (ms/1000) + ' secs');
