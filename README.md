@@ -36,6 +36,57 @@ Method tbd
 
 -- TODO : compare n hash table size with time needed
 
+### sample result
+
+```
+PARALLEL HASHING
+=================================================
+Platform: linux
+Number of CPUs : 4
+	Model: Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz
+	Speed: 1861MHz
+	Times:
+		user: 7019.6 secs
+		nice: 45.2 secs
+		sys: 1188.8 secs
+		idle: 63997.8 secs
+		irq: 0 secs
+	Model: Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz
+	Speed: 2392MHz
+	Times:
+		user: 6838.7 secs
+		nice: 8.4 secs
+		sys: 1196.4 secs
+		idle: 64345 secs
+		irq: 0 secs
+	Model: Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz
+	Speed: 2417MHz
+	Times:
+		user: 6931.3 secs
+		nice: 4.8 secs
+		sys: 1319.8 secs
+		idle: 63663.4 secs
+		irq: 0 secs
+	Model: Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz
+	Speed: 2698MHz
+	Times:
+		user: 5826 secs
+		nice: 82.8 secs
+		sys: 1247.7 secs
+		idle: 65084.3 secs
+		irq: 0 secs
+=================================================
+Cluster is Master. start to create child process
+Number of insertion : 100000
+=================================================
+Waiting for hash to be completed...
+Hashing done
+=================================================
+Filled table 1: 100000
+Filled table 2: 0
+Time used: 62.545 secs
+```
+
 ## Conclusion
 
 -- tbd
