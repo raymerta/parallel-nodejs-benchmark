@@ -135,8 +135,21 @@ var tbsize = 600;
 var rangeInput = 100000;
 var inputVal = generateInputValue(rangeInput, false, 500000, 10000000);
 //var inputVal = [20, 50, 53, 75, 100, 67, 105, 3, 36, 39, 6];
-
-console.log('Serial Hashing');
+console.log(' ');
+console.log('SERIAL HASHING');
+console.log('=================================================');
+console.log('Platform: '+ os.platform());
+console.log('Number of CPUs : ' + numCPUs);
+for (var i = 0; i < numCPUs; i++) {
+  console.log('\tModel: ' + os.cpus()[i].model);
+  console.log('\tSpeed: ' + os.cpus()[i].speed + 'MHz');
+  console.log('\tTimes: ');
+  console.log('\t\tuser: ' + (os.cpus()[i].times.user / 1000) + ' secs');
+  console.log('\t\tnice: ' + (os.cpus()[i].times.nice / 1000) + ' secs');
+  console.log('\t\tsys: ' + (os.cpus()[i].times.sys / 1000) + ' secs');
+  console.log('\t\tidle: ' + (os.cpus()[i].times.idle / 1000) + ' secs');
+  console.log('\t\tirq: ' + (os.cpus()[i].times.irq / 1000) + ' secs');
+}
 console.log('=================================================');
 console.log('Number of insertion : ' + rangeInput);
 console.log('=================================================');

@@ -20,6 +20,7 @@ effective it gets. Its performance is also affected by number of cores on the sy
 ## Cuckoo hashing
 
 Cuckoo hashing is a simple collision resolution in hash table.
+Method tbd
 
 ## Testing method
 
@@ -36,6 +37,9 @@ Cuckoo hashing is a simple collision resolution in hash table.
 -- TODO : compare n hash table size with time needed
 
 ## Conclusion
+
+-- tbd
+
 
 ## How to run
 -- install node js https://nodejs.org/en/download/ if you don't have any
@@ -55,3 +59,4 @@ Cuckoo hashing is a simple collision resolution in hash table.
 # TO DO LIST
 -- print out hash table result
 -- try web IO measurement
+-- set input for node js console for easier testing https://nodejs.org/api/readline.html

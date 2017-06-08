@@ -1,6 +1,8 @@
 var cluster = require('cluster');
 var http = require('http');
-var numCPUs = require('os').cpus().length;
+var os = require('os');
+
+var numCPUs = os.cpus().length;
 //var numCPUs = 2;
 
 // generate hash table
@@ -180,11 +182,26 @@ if (cluster.isMaster) {
   var generatedValue = 0;
   var collectedResult = new Array();
 
-  console.log('Parallel Hashing');
+  console.log(' ');
+  console.log('PARALLEL HASHING');
+  console.log('=================================================');
+  console.log('Platform: '+ os.platform());
+  console.log('Number of CPUs : ' + numCPUs);
+  for (var i = 0; i < numCPUs; i++) {
+    console.log('\tModel: ' + os.cpus()[i].model);
+    console.log('\tSpeed: ' + os.cpus()[i].speed + 'MHz');
+    console.log('\tTimes: ');
+    console.log('\t\tuser: ' + (os.cpus()[i].times.user / 1000) + ' secs');
+    console.log('\t\tnice: ' + (os.cpus()[i].times.nice / 1000) + ' secs');
+    console.log('\t\tsys: ' + (os.cpus()[i].times.sys / 1000) + ' secs');
+    console.log('\t\tidle: ' + (os.cpus()[i].times.idle / 1000) + ' secs');
+    console.log('\t\tirq: ' + (os.cpus()[i].times.irq / 1000) + ' secs');
+  }
+
   console.log('=================================================');
   console.log('Cluster is Master. start to create child process');
   console.log('Number of insertion : ' + rangeInput);
-  console.log('Number of CPUs : ' + numCPUs);
+
   console.log('=================================================');
   console.log('Waiting for hash to be completed...');
 
