@@ -1,4 +1,5 @@
 var http = require('http');
+var os = require('os');
 
 // generate hash table
 function hashTable(obj) {
@@ -139,6 +140,7 @@ console.log(' ');
 console.log('SERIAL HASHING');
 console.log('=================================================');
 console.log('Platform: '+ os.platform());
+console.log('Total memory: ' + os.totalmem());
 console.log('Number of CPUs : ' + numCPUs);
 for (var i = 0; i < numCPUs; i++) {
   console.log('\tModel: ' + os.cpus()[i].model);
