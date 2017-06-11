@@ -135,7 +135,7 @@ function generateInputValue(size, isRandom, start, stop) {
 var tb1 = new hashTable();
 var tb2 = new hashTable();
 var rangeInput = 100000;
-var inputVal = generateInputValue(rangeInput, false, 500000, 10000000);
+var inputVal = generateInputValue(rangeInput, false, 30000, 10000000);
 //var inputVal = [20, 50, 53, 75, 100, 67, 105, 3, 36, 39, 6];
 console.log(' ');
 console.log('SERIAL HASHING');

@@ -177,7 +177,7 @@ function combineResolveHash(res) {
 
 //start cluster
 if (cluster.isMaster) {
-  var rangeInput = 100000;
+  var rangeInput = 500000;
   var inputVal = generateInputValue(rangeInput, false, 30000, 10000000);
   var generatedValue = 0;
   var collectedResult = new Array();
