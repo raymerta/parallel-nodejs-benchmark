@@ -11,16 +11,15 @@ effective it gets. Its performance is also affected by number of cores on the sy
 
 ## Background
 
--- nodejs increasing usage popularity in high traffic website
--- have simple configuration compared to nginx for high traffic website
+- nodejs increasing usage popularity in high traffic website
+- have simple configuration compared to nginx for high traffic website
 
 ## Cluster module
 
 
 ## Cuckoo hashing
 
-Cuckoo hashing is a simple collision resolution in hash table.
-Method tbd
+Is an open addressing method by using two tables with different hash function where items will be inserted to empty spaces in the tables. Conflict is resolved by recursive insertion and eviction.
 
 ## Testing method
 
@@ -93,21 +92,22 @@ Time used: 62.545 secs
 
 
 ## How to run
--- install node js https://nodejs.org/en/download/ if you don't have any
--- if you have node on your computer, 'npm install create-node-module'
--- run parallel code : node hashing-parallel.js
--- run serial code : node hashing-serial.js
+- install node js https://nodejs.org/en/download/ if you don't have any
+- if you have node on your computer, 'npm install create-node-module'
+- run parallel code : node hashing-parallel.js
+- run serial code : node hashing-serial.js
 
+---
 
 # Matrix Multiplication
 
 ## How to run :
--- 'node matrix-parallel.js' to run parallel matrix multiplication
--- 'node matrix-serial.js' to run serial matrix multiplication
--- to specify matrix size, find variable matrixA and matrixB, change size and value in matrixGenerator method
--- number of times needed written in the terminal
+- 'node matrix-parallel.js' to run parallel matrix multiplication
+- 'node matrix-serial.js' to run serial matrix multiplication
+- to specify matrix size, find variable matrixA and matrixB, change size and value in matrixGenerator method
+- number of times needed written in the terminal
 
 # TO DO LIST
--- print out hash table result
--- try web IO measurement
--- set input for node js console for easier testing https://nodejs.org/api/readline.html
+- print out hash table result
+- try web IO measurement
+- set input for node js console for easier testing https://nodejs.org/api/readline.html
