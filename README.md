@@ -13,27 +13,15 @@ effective it gets. Its performance is also affected by number of cores on the sy
 
 - nodejs increasing usage popularity in high traffic website
 - have simple configuration compared to nginx for high traffic website
+- acting as in-memory database for the data
 
 ## Cluster module
 
+A single instance of Node.js runs in a single thread. To take advantage of multi-core systems, the user will sometimes want to launch a cluster of Node.js processes to handle the load. The cluster module allows easy creation of child processes that all share server ports.
 
-## Cuckoo hashing
+## Parallel Cuckoo hashing
 
 Is an open addressing method by using two tables with different hash function where items will be inserted to empty spaces in the tables. Conflict is resolved by recursive insertion and eviction.
-
-## Testing method
-
-### number of requests handled - tbd
-
--- install siege
-
-### memory consumed - tbd
-
--- install PM2
-
-### time needed to produce n size hash table
-
--- TODO : compare n hash table size with time needed
 
 ### sample result
 
@@ -86,10 +74,6 @@ Filled table 2: 0
 Time used: 62.545 secs
 ```
 
-## Conclusion
-
--- tbd
-
 
 ## How to run
 - install node js https://nodejs.org/en/download/ if you don't have any
@@ -99,7 +83,7 @@ Time used: 62.545 secs
 
 ---
 
-# Matrix Multiplication
+# Matrix Multiplication Sanity Check
 
 ## How to run :
 - 'node matrix-parallel.js' to run parallel matrix multiplication
@@ -107,7 +91,16 @@ Time used: 62.545 secs
 - to specify matrix size, find variable matrixA and matrixB, change size and value in matrixGenerator method
 - number of times needed written in the terminal
 
+# To look at: 
+
+- hash table : https://algs4.cs.princeton.edu/34hash/
+- multi-core server manager : https://www.npmjs.com/package/cluster --> some abstraction of cluster module
+- in-memory database in javascript : https://www.npmjs.com/package/lokijs --> maybe can improve its performance by utilizing cluster module?
+
 # TO DO LIST
-- print out hash table result
+
+- hash function option when running hash table
+- performance comparison for each hash table
+- publish to npmjs
 - try web IO measurement
 - set input for node js console for easier testing https://nodejs.org/api/readline.html
