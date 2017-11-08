@@ -1,0 +1,26 @@
+{
+  "name": "parallel-cluster",
+  "version": "0.0.1",
+  "description": "Parallel hashing using node.js cluster module",
+  "main": "hashing-parallel.js",
+  "dependencies": {
+    "crypto-js": "^3.1.9-1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raymerta/parallel-nodejs-benchmark.git"
+  },
+  "keywords": [
+    "cluster-module"
+  ],
+  "author": "Radita Liem <raditaliem@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raymerta/parallel-nodejs-benchmark/issues"
+  },
+  "homepage": "https://github.com/raymerta/parallel-nodejs-benchmark#readme"
+}
