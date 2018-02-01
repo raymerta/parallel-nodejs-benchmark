@@ -81,8 +81,6 @@ Time used: 62.545 secs
 - run parallel code : node hashing-parallel.js
 - run serial code : node hashing-serial.js
 
----
-
 # Matrix Multiplication Sanity Check
 
 ## How to run :
@@ -96,6 +94,20 @@ Time used: 62.545 secs
 - hash table : https://algs4.cs.princeton.edu/34hash/
 - multi-core server manager : https://www.npmjs.com/package/cluster --> some abstraction of cluster module
 - in-memory database in javascript : https://www.npmjs.com/package/lokijs --> maybe can improve its performance by utilizing cluster module?
+
+**matrix multiplication**
+
+- verify the value is correct
+- use it to check the improvements of the parallel hashing
+- put it in paper
+
+**parallel hashing**
+
+- check more sources from scopus
+- compare the result with serial hashing? - hash table result, not the speed
+- print out the bucket filled problem in parallel 
+- check how to solve this problem in other reference
+- maybe need to create the query function (?)
 
 # TO DO LIST
 
