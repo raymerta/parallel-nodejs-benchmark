@@ -42,15 +42,32 @@ function matrixGenerator(size, val) {
   var arr = new Array()
   var arrv = new Array();
 
-  for (var j = 0; j < size; j++) {
-    arrv.push(val);
-  }
+  if (val == 0) {
+    for (var i = 0; i < size; i++) {
+      
+      arrv = new Array();
+      for (var j = 0; j < size; j++) {
+        arrv.push(precisionRound(Math.random(), 1));
+      }
 
-  for (var i = 0; i < size; i++) {
-    arr.push(arrv);
+      arr.push(arrv);
+    }
+  } else {
+    for (var j = 0; j < size; j++) {
+      arrv.push(val);
+    }
+
+    for (var i = 0; i < size; i++) {
+      arr.push(arrv);
+    }
   }
 
   return arr;
+}
+
+function precisionRound(number, precision) {
+  var factor = Math.pow(10, precision);
+  return Math.round(number * factor) / factor;
 }
 
 function matrixMultiplication(a, b) {
@@ -154,8 +171,8 @@ function assemblyMatrix(res) {
 
 if (cluster.isMaster) {
 
-  var matrixA = matrixGenerator(5000,1);
-  var matrixB = matrixGenerator(5000,1);
+  var matrixA = matrixGenerator(2,0);
+  var matrixB = matrixGenerator(2,0);
 
   console.log('matrix generated');
 
